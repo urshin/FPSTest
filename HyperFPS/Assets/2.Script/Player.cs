@@ -15,6 +15,10 @@ public class Player : NetworkBehaviour
     // 네트워크 캐릭터 컨트롤러
     private NetworkCharacterController _cc;
 
+
+    //애니메이션
+    private Animator _animator;
+
     // 생성할 Ball 및 PhysxBall 프리팹
     [SerializeField] private Ball _prefabBall;
     [SerializeField] private PhysxBall _prefabPhysxBall;
@@ -26,6 +30,8 @@ public class Player : NetworkBehaviour
 
     // 네트워크 타이머
     [Networked] private TickTimer delay { get; set; }
+
+   
 
     // 플레이어 속성 중 하나인 스폰 여부
     [Networked]
@@ -81,11 +87,21 @@ public class Player : NetworkBehaviour
         _inputField = FindAnyObjectByType<TMP_InputField>();
         _scrollbar = GameObject.Find("ChatScrollbar").GetComponent<Scrollbar>();
         currentState = playerState.Ingame;
+        _animator = GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
+        if(Object.HasInputAuthority)
+        {
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            var movementInput = (new Vector3(horizontal, 0, vertical)).normalized;
 
+
+            _animator.SetFloat("test", movementInput.magnitude);
+
+        }
 
         // 입력 권한이 있고 R 키가 눌렸을 때 메시지 전송
         if (Object.HasInputAuthority && Input.GetKeyDown(KeyCode.Return))
