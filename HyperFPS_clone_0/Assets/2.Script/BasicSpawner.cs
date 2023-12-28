@@ -68,6 +68,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
             // Keep track of the player avatars for easy access
             _spawnedCharacters.Add(player, networkPlayerObject);
+            
         }
     }
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player) 
@@ -78,6 +79,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             runner.Despawn(networkObject);
             _spawnedCharacters.Remove(player);
+            
         }
     }
 
@@ -93,17 +95,28 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     {
         var data = new NetworkInputData();
 
-        if (Input.GetKey(KeyCode.W))
-            data.direction += Vector3.forward;
+        //if (Input.GetKey(KeyCode.W))
+        //    data.direction += Vector3.forward;
 
-        if (Input.GetKey(KeyCode.S))
-            data.direction += Vector3.back;
+        //if (Input.GetKey(KeyCode.S))
+        //    data.direction += Vector3.back;
 
-        if (Input.GetKey(KeyCode.A))
-            data.direction += Vector3.left;
+        //if (Input.GetKey(KeyCode.A))
+        //    data.direction += Vector3.left;
 
-        if (Input.GetKey(KeyCode.D))
-            data.direction += Vector3.right;
+        //if (Input.GetKey(KeyCode.D))
+        //    data.direction += Vector3.right;
+
+        float horizontalMovement = Input.GetAxis("Horizontal");
+        float verticalMovement = Input.GetAxis("Vertical");
+        data.direction = new Vector3(horizontalMovement, 0f, verticalMovement).normalized;
+
+
+        data.mouseX = Input.GetAxis("Mouse X");
+        data.mouseY = Input.GetAxis("Mouse Y");
+
+
+        //마우스 입력
         if (_mouseButton0)
             data.buttons |= NetworkInputData.MOUSEBUTTON1;
         _mouseButton0 = false;
@@ -111,6 +124,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (_mouseButton1)
             data.buttons |= NetworkInputData.MOUSEBUTTON2;
         _mouseButton1 = false;
+
+
+
+
 
         input.Set(data);
     }

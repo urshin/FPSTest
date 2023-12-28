@@ -1,7 +1,11 @@
+using Cinemachine;
 using Fusion;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class Player : NetworkBehaviour
 {
@@ -31,7 +35,7 @@ public class Player : NetworkBehaviour
     // 네트워크 타이머
     [Networked] private TickTimer delay { get; set; }
 
-   
+
 
     // 플레이어 속성 중 하나인 스폰 여부
     [Networked]
@@ -43,12 +47,27 @@ public class Player : NetworkBehaviour
 
 
     //채팅 시스템
-    [SerializeField] TMP_InputField _inputField;
-    [SerializeField] Scrollbar _scrollbar;
+    TMP_InputField _inputField;
+    Scrollbar _scrollbar;
     //private TMP_Text _messages;
     GameObject _chat;
     [SerializeField] GameObject _chat_Content_Text;
     [SerializeField] byte MaxChat = 20;
+
+
+    //camera
+    [SerializeField] GameObject Cam;
+
+
+    //playerInfo
+    [SerializeField] float PlayerSpeed = 5;
+    [SerializeField] float rotationSpeed = 5.0f;
+
+
+    //mouse
+    private float pitch = 0f; // 마우스 Y축 회전 값
+    private float yaw = 0f;
+
 
 
     private void Awake()
@@ -88,11 +107,15 @@ public class Player : NetworkBehaviour
         _scrollbar = GameObject.Find("ChatScrollbar").GetComponent<Scrollbar>();
         currentState = playerState.Ingame;
         _animator = GetComponentInChildren<Animator>();
+
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void Update()
     {
-        if(Object.HasInputAuthority)
+        if (Object.HasInputAuthority)
         {
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
@@ -102,6 +125,9 @@ public class Player : NetworkBehaviour
             _animator.SetFloat("test", movementInput.magnitude);
 
         }
+
+
+
 
         // 입력 권한이 있고 R 키가 눌렸을 때 메시지 전송
         if (Object.HasInputAuthority && Input.GetKeyDown(KeyCode.Return))
@@ -121,7 +147,7 @@ public class Player : NetworkBehaviour
                 _inputField.text = null;
                 _inputField.DeactivateInputField();
 
-                if(_chat.transform.childCount >= MaxChat)
+                if (_chat.transform.childCount >= MaxChat)
                 {
                     Destroy(_chat.transform.GetChild(0).gameObject);
                 }
@@ -131,8 +157,6 @@ public class Player : NetworkBehaviour
         }
 
     }
-
-
 
 
     // 메시지 전송 RPC
@@ -152,10 +176,12 @@ public class Player : NetworkBehaviour
         {
 
             message = $"You: {message}\n";
+
         }
         else
         {
             message = $"other: {message}\n";
+
         }
         GameObject chatMessage = Instantiate(_chat_Content_Text, _chat.transform);
 
@@ -163,16 +189,31 @@ public class Player : NetworkBehaviour
 
     }
 
+
+
     //네트워크 FixedUpdate 처리
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
         {
-            data.direction.Normalize();
-            _cc.Move(5 * data.direction * Runner.DeltaTime);
+           
+                Vector3 rotatedMovement = Quaternion.Euler(0, Cam.transform.eulerAngles.y, 0) * data.direction;
+                _cc.Move(rotatedMovement * PlayerSpeed * Runner.DeltaTime);
 
-            if (data.direction.sqrMagnitude > 0)
-                _forward = data.direction;
+                yaw = data.mouseX * rotationSpeed;
+                pitch -= data.mouseY * rotationSpeed;
+            
+
+                pitch = Mathf.Clamp(pitch, -90f, 90f);
+            
+                transform.Rotate(Vector3.up * yaw);
+                Cam.gameObject.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+
+            
+            
+
+
+
 
             if (HasStateAuthority && delay.ExpiredOrNotRunning(Runner))
             {
