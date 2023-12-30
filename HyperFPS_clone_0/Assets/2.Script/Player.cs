@@ -1,5 +1,6 @@
 using Cinemachine;
 using Fusion;
+using System.Threading;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -56,7 +57,9 @@ public class Player : NetworkBehaviour
 
 
     //camera
-    [SerializeField] GameObject Cam;
+    [SerializeField] GameObject CamParent;
+    [SerializeField] Camera mainCamera; // 레이를 쏘기 위한 카메라
+    public LayerMask targetLayer;  // 레이어 마스크
 
 
     //playerInfo
@@ -107,7 +110,7 @@ public class Player : NetworkBehaviour
         _scrollbar = GameObject.Find("ChatScrollbar").GetComponent<Scrollbar>();
         currentState = playerState.Ingame;
         _animator = GetComponentInChildren<Animator>();
-
+        mainCamera = Camera.main;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -126,7 +129,18 @@ public class Player : NetworkBehaviour
 
         }
 
+        //Ray ray = mainCamera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 
+        //// 레이와 충돌한 객체를 검사합니다.
+        //RaycastHit hit;
+        //if (Physics.Raycast(ray, out hit, Mathf.Infinity, targetLayer))
+        //{
+        //    // 레이가 충돌한 지점의 좌표를 얻습니다.
+        //    Vector3 targetPosition = hit.point;
+
+        //    // 플레이어가 해당 지점을 바라보게 설정합니다.
+        //    transform.LookAt(targetPosition);
+        //}
 
 
         // 입력 권한이 있고 R 키가 눌렸을 때 메시지 전송
@@ -189,29 +203,35 @@ public class Player : NetworkBehaviour
 
     }
 
-
+    [SerializeField] GameObject Aimpoint;
 
     //네트워크 FixedUpdate 처리
     public override void FixedUpdateNetwork()
     {
         if (GetInput(out NetworkInputData data))
         {
-           
-                Vector3 rotatedMovement = Quaternion.Euler(0, Cam.transform.eulerAngles.y, 0) * data.direction;
-                _cc.Move(rotatedMovement * PlayerSpeed * Runner.DeltaTime);
 
-                yaw = data.mouseX * rotationSpeed;
-                pitch -= data.mouseY * rotationSpeed;
-            
-
-                pitch = Mathf.Clamp(pitch, -90f, 90f);
-            
-                transform.Rotate(Vector3.up * yaw);
-                Cam.gameObject.transform.localRotation = Quaternion.Euler(pitch, 0f, 0f);
+            //Vector3 moveAmount = data.direction * PlayerSpeed * Runner.DeltaTime;
+            //_cc.Move(moveAmount);
 
             
+            Vector3 moveDirection = Quaternion.Euler(0, transform.eulerAngles.y, 0) * data.direction;
+
+            _cc.Move(moveDirection * PlayerSpeed *Runner.DeltaTime);
+
             
 
+            //카메라 움직임
+            transform.eulerAngles += new Vector3(0, data.mouseX, 0) * rotationSpeed * Runner.DeltaTime;
+            CamParent.transform.eulerAngles += new Vector3(-data.mouseY, 0, 0) * rotationSpeed * Runner.DeltaTime;
+
+            // y값이 특정 각도 범위를 벗어나지 않도록 클램핑
+            float currentXRotation = transform.eulerAngles.x;
+            if (currentXRotation > 180.0f)
+            {
+                currentXRotation -= 360.0f;
+            }
+            transform.eulerAngles = new Vector3(Mathf.Clamp(currentXRotation, -80.0f, 80.0f), transform.eulerAngles.y, 0);
 
 
 

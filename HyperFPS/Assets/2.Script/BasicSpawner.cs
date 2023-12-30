@@ -112,9 +112,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         data.direction = new Vector3(horizontalMovement, 0f, verticalMovement).normalized;
 
 
-        data.mouseX = Input.GetAxis("Mouse X");
-        data.mouseY = Input.GetAxis("Mouse Y");
-
+       data.mouseX= Input.GetAxis("Mouse X");
+       data.mouseY= Input.GetAxis("Mouse Y");
 
         //마우스 입력
         if (_mouseButton0)
