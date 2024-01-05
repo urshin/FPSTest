@@ -1,3 +1,4 @@
+using Cinemachine;
 using Fusion;
 using System.Threading;
 using TMPro;
@@ -47,6 +48,9 @@ public class Player : NetworkBehaviour
 
     //카메라
     [SerializeField] Camera _camera;
+
+    //카메라 부모
+    [SerializeField] GameObject Cam;
 
 
     //레이 관련
@@ -131,16 +135,30 @@ public class Player : NetworkBehaviour
         {
             Debug.DrawRay(cameraArm.position, cameraArm.forward, Color.blue);
 
+
+            //메인 카메라 로테이션 돌리면 됨
+            //Camera.main.transform.rotation = 
+
+
+            //  Debug.Log(data.mouseDirection);
+
+
             data.direction.Normalize();
             _cc.Move(5 * data.direction * Runner.DeltaTime);
 
+            transform.rotation = data.mouseDirection;
+          
             if (data.buttons.IsSet(NetworkInputButtons.Jump))
             {
                 _cc.Jump();
             }
+            
+
+
 
             if (data.direction.sqrMagnitude > 0)
                 _forward = data.direction;
+
 
             if (HasStateAuthority && delay.ExpiredOrNotRunning(Runner))
             {
@@ -157,6 +175,22 @@ public class Player : NetworkBehaviour
                     //     o.GetComponent<Ball>().Init();
                     // });
                 }
+
+                var freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+
+                var AimCam = Cam.GetComponent<Animator>();
+                if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
+                {
+                    freeLookCamera.m_Lens.FieldOfView = 30f;
+                   // AimCam.Play("3thPersonAim");
+
+                }
+                else
+                {
+                   freeLookCamera.m_Lens.FieldOfView = 60f;
+                    //AimCam.Play("FreeLook");
+                }    
+               
             }
         }
     }

@@ -59,11 +59,13 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     private bool _mouseButton0;
+    private bool _mouseButton1;
 
     // 마우스 버튼 상태를 추적하는 업데이트 메서드
     private void Update()
     {
         _mouseButton0 = _mouseButton0 | Input.GetMouseButton(0);
+        _mouseButton1 = _mouseButton1 | Input.GetMouseButton(1);
     }
 
     // 플레이어가 게임에 참가할 때 호출되는 콜백
@@ -101,7 +103,8 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         var cameraRotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f);
         var inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
         data.direction = cameraRotation * inputDirection;
-
+        data.moveDirection = inputDirection;
+        data.mouseDirection = cameraRotation;
         // 스페이스바에 기반한 점프 입력 설정
         data.buttons.Set(NetworkInputButtons.Jump, Input.GetKey(KeyCode.Space));
 
@@ -112,6 +115,11 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         // 마우스 버튼 0 상태 추적
         data.buttons.Set(NetworkInputData.MOUSEBUTTON0, _mouseButton0);
         _mouseButton0 = false;
+
+        // 마우스 버튼 0 상태 추적
+        data.buttons.Set(NetworkInputData.MOUSEBUTTON1, _mouseButton1);
+        _mouseButton1 = false;
+
 
         input.Set(data);
     }
