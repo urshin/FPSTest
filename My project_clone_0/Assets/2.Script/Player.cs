@@ -74,6 +74,7 @@ public class Player : NetworkBehaviour
             RPC_SendMessage("Hey Mate!");
         }
     }
+   
 
     // 채팅 메시지를 전송하는 RPC
     [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
@@ -113,13 +114,17 @@ public class Player : NetworkBehaviour
             
 
         }
+        Debug.Log(PlayerData.NickName);
         camController = Cam.GetComponent<Animator>();
         gameObject.layer = Object.HasInputAuthority ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Enemy");
+
+        Cam.GetComponent<PlayerAvatarView>().SetNickName(PlayerData.NickName);
     }
 
     // 네트워크 상태가 변경될 때 호출되는 메서드
     public override void Render()
     {
+        
         foreach (var change in _changeDetector.DetectChanges(this))
         {
             switch (change)
@@ -182,7 +187,7 @@ public class Player : NetworkBehaviour
             {
                 if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON0))
                 {
-                    // delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
+                    delay = TickTimer.CreateFromSeconds(Runner, 0.2f);
                     GetInfoRay();
 
                     Runner.Spawn(_prefabBall,

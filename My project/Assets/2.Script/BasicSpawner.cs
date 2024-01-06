@@ -14,7 +14,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     async void StartGame(GameMode mode)
     {
         // 플레이어를 위한 랜덤 닉네임 생성
-        PlayerData.NickName = $"Player{UnityEngine.Random.Range(0, 10000)}";
+       // PlayerData.NickName = $"Player{UnityEngine.Random.Range(0, 10000)}";
         print(System.Reflection.MethodBase.GetCurrentMethod().Name);
 
         // Fusion 러너를 생성하고 사용자 입력을 활성화합니다.
@@ -28,7 +28,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
-
+        PlayerData.NickName = $"Player{UnityEngine.Random.Range(0, 10000)}";
         // 특정 이름의 세션을 사용하여 세션을 시작하거나 참가합니다.
         await _runner.StartGame(new StartGameArgs()
         {

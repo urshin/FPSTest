@@ -7,7 +7,7 @@ public class PlayerAvatarView : MonoBehaviour
 {
 
     private Animator camAnimator;
-    
+    [SerializeField]  private TextMeshProUGUI nameLabel;
 
     private void Start()
     {
@@ -29,5 +29,16 @@ public class PlayerAvatarView : MonoBehaviour
         cinemachineCamera.m_AnimatedTarget = gameObject.GetComponent<Animator>();
 
 
+    }
+   
+    public void SetNickName(string nickName)
+    {
+        nameLabel.text = nickName;
+    }
+
+    private void LateUpdate()
+    {
+    
+        nameLabel.transform.rotation = Camera.main.transform.rotation;
     }
 }
