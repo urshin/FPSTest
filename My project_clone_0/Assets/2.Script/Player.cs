@@ -48,6 +48,8 @@ public class Player : NetworkBehaviour
 
     //카메라
     [SerializeField] Camera _camera;
+    [SerializeField] CinemachineFreeLook freeLookCamera;
+    Animator camController;
 
     //카메라 부모
     [SerializeField] GameObject Cam;
@@ -108,8 +110,10 @@ public class Player : NetworkBehaviour
         if (Object.HasInputAuthority)
         {
             view.SetCameraTarget();
-           
+            
+
         }
+        camController = Cam.GetComponent<Animator>();
         gameObject.layer = Object.HasInputAuthority ? LayerMask.NameToLayer("Player") : LayerMask.NameToLayer("Enemy");
     }
 
@@ -128,6 +132,20 @@ public class Player : NetworkBehaviour
         }
     }
 
+    private void LateUpdate()
+    {
+        if (Input.GetKey(KeyCode.Mouse1))
+        {
+            // freeLookCamera.m_Lens.FieldOfView = 30f;
+            camController.Play("3thPersonAim");
+
+        }
+        else
+        {
+            // freeLookCamera.m_Lens.FieldOfView = 60f;
+            camController.Play("FreeLook");
+        }
+    }
     // 네트워크에서 FixedUpdateNetwork 메서드를 구현한 부분
     public override void FixedUpdateNetwork()
     {
@@ -167,28 +185,28 @@ public class Player : NetworkBehaviour
                     // delay = TickTimer.CreateFromSeconds(Runner, 0.5f);
                     GetInfoRay();
 
-                    //Runner.Spawn(_prefabBall,
-                    //transform.position + _forward, Quaternion.LookRotation(_forward),
-                    // Object.InputAuthority, (runner, o) =>
-                    // {
-                    //     // 볼을 동기화하기 전에 초기화합니다.
-                    //     o.GetComponent<Ball>().Init();
-                    // });
+                    Runner.Spawn(_prefabBall,
+                    transform.position + _forward, transform.rotation,
+                     Object.InputAuthority, (runner, o) =>
+                     {
+                         // 볼을 동기화하기 전에 초기화합니다.
+                         o.GetComponent<Ball>().Init();
+                     });
                 }
 
-                var freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
-
-                var AimCam = Cam.GetComponent<Animator>();
+                //freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+                
+                
                 if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
                 {
-                    freeLookCamera.m_Lens.FieldOfView = 30f;
-                   // AimCam.Play("3thPersonAim");
+                    // freeLookCamera.m_Lens.FieldOfView = 30f;
+                   // camController.Play("3thPersonAim");
 
                 }
-                else
+                else if(!data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
                 {
-                   freeLookCamera.m_Lens.FieldOfView = 60f;
-                    //AimCam.Play("FreeLook");
+                    // freeLookCamera.m_Lens.FieldOfView = 60f;
+                   // camController.Play("FreeLook");
                 }    
                
             }

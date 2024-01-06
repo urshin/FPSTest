@@ -7,6 +7,7 @@ public class PlayerAvatarView : MonoBehaviour
 {
 
     private Animator camAnimator;
+    
 
     private void Start()
     {
@@ -14,16 +15,18 @@ public class PlayerAvatarView : MonoBehaviour
     }
     public void SetCameraTarget()
     {
-        var freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
-        freeLookCamera.LookAt = transform;
-        freeLookCamera.Follow = transform;
+        //var freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+
+        //freeLookCamera.LookAt = transform;
+        //freeLookCamera.Follow = transform;
 
 
-        ////StateDrivenCamera
-        //var cinemachineCamera = FindObjectOfType<CinemachineStateDrivenCamera>();
-        //cinemachineCamera.LookAt = transform;
-        //cinemachineCamera.Follow = transform;
-        //cinemachineCamera.m_AnimatedTarget = gameObject.GetComponent<Animator>();
+
+        //StateDrivenCamera
+        var cinemachineCamera = FindObjectOfType<CinemachineStateDrivenCamera>();
+        cinemachineCamera.LookAt = transform;
+        cinemachineCamera.Follow = transform;
+        cinemachineCamera.m_AnimatedTarget = gameObject.GetComponent<Animator>();
 
 
     }
