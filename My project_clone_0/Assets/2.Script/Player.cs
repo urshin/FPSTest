@@ -59,6 +59,12 @@ public class Player : NetworkBehaviour
     // 무시할 레이어를 설정합니다.
     public LayerMask ignoreLayer;
 
+
+    //Animator
+    [SerializeField] Animator bodyAnime;
+
+
+
     private void Start()
     {
         // 마우스 커서 설정
@@ -170,7 +176,13 @@ public class Player : NetworkBehaviour
             _cc.Move(5 * data.direction * Runner.DeltaTime);
 
             transform.rotation = data.mouseDirection;
-          
+
+
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+            float speed = Mathf.Sqrt(horizontalInput * horizontalInput + verticalInput * verticalInput);
+            bodyAnime.SetFloat("Direction", speed);
+
             if (data.buttons.IsSet(NetworkInputButtons.Jump))
             {
                 _cc.Jump();
@@ -199,19 +211,17 @@ public class Player : NetworkBehaviour
                      });
                 }
 
-                //freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+              
                 
                 
                 if (data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
                 {
-                    // freeLookCamera.m_Lens.FieldOfView = 30f;
-                   // camController.Play("3thPersonAim");
+                 
 
                 }
                 else if(!data.buttons.IsSet(NetworkInputData.MOUSEBUTTON1))
                 {
-                    // freeLookCamera.m_Lens.FieldOfView = 60f;
-                   // camController.Play("FreeLook");
+                 
                 }    
                
             }
