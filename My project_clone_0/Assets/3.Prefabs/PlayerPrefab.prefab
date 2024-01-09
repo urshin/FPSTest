@@ -1779,7 +1779,10 @@ GameObject:
   - component: {fileID: 6194037587743564416}
   - component: {fileID: 9140274617746188095}
   - component: {fileID: 4529462365006124391}
-  - component: {fileID: 8251516270336209061}
+  - component: {fileID: 1533189504272775769}
+  - component: {fileID: 2098777127723952862}
+  - component: {fileID: 2891051427670916931}
+  - component: {fileID: 7346841655567375318}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -1824,7 +1827,9 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 9140274617746188095}
   - {fileID: 4529462365006124391}
-  - {fileID: 8251516270336209061}
+  - {fileID: 2098777127723952862}
+  - {fileID: 2891051427670916931}
+  - {fileID: 7346841655567375318}
 --- !u!143 &6194037587743564416
 CharacterController:
   m_ObjectHideFlags: 0
@@ -1894,7 +1899,44 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   bodyAnime: {fileID: 512003759528240004}
---- !u!114 &8251516270336209061
+--- !u!114 &1533189504272775769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646429610434534605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 278557f86bf0611489e7976b01868df6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2098777127723952862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646429610434534605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c660d5be06aad99418007523e02faeb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bodyAnime: {fileID: 512003759528240004}
+--- !u!114 &2891051427670916931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6646429610434534605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2eb6ae1c8017947b61032efe999372, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7346841655567375318
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1908,7 +1950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Animator: {fileID: 512003759528240004}
   TotalWords: 1
-  ApplyTiming: 2
+  ApplyTiming: 0
   SyncSettings: 79
   StateHashes: 00000000a1f7ab0dbb6691e7
   TriggerHashes: 00000000

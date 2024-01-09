@@ -156,6 +156,7 @@ public class Player : NetworkBehaviour
             // freeLookCamera.m_Lens.FieldOfView = 60f;
             camController.Play("FreeLook");
         }
+        
     }
     // 네트워크에서 FixedUpdateNetwork 메서드를 구현한 부분
     public override void FixedUpdateNetwork()
@@ -163,36 +164,6 @@ public class Player : NetworkBehaviour
         if (GetInput(out NetworkInputData data))
         {
             Debug.DrawRay(cameraArm.position, cameraArm.forward, Color.blue);
-
-
-            //메인 카메라 로테이션 돌리면 됨
-            //Camera.main.transform.rotation = 
-
-
-            //  Debug.Log(data.mouseDirection);
-
-
-            data.direction.Normalize();
-            _cc.Move(5 * data.direction * Runner.DeltaTime);
-
-            transform.rotation = data.mouseDirection;
-
-
-            float horizontalInput = Input.GetAxis("Horizontal");
-            float verticalInput = Input.GetAxis("Vertical");
-            float speed = Mathf.Sqrt(horizontalInput * horizontalInput + verticalInput * verticalInput);
-            bodyAnime.SetFloat("Direction", speed);
-
-            if (data.buttons.IsSet(NetworkInputButtons.Jump))
-            {
-                _cc.Jump();
-            }
-            
-
-
-
-            if (data.direction.sqrMagnitude > 0)
-                _forward = data.direction;
 
 
             if (HasStateAuthority && delay.ExpiredOrNotRunning(Runner))

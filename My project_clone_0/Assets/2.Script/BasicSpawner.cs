@@ -5,10 +5,15 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using static NetworkInputData;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
+
+    PlayerInputHandler _playerInputHandler;
+
+   public NetworkPlayer _networkPlayer;
 
     // 선택된 게임 모드에 기반하여 게임을 시작합니다.
     async void StartGame(GameMode mode)
@@ -92,40 +97,24 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             _spawnedCharacters.Remove(player);
         }
     }
+    
 
     // 플레이어 입력을 처리하는 콜백
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        //print(System.Reflection.MethodBase.GetCurrentMethod().Name);
-        var data = new NetworkInputData();
 
-        // 플레이어 이동 입력 얻기
-        var cameraRotation = Quaternion.Euler(0f, Camera.main.transform.rotation.eulerAngles.y, 0f);
-        var inputDirection = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        data.direction = cameraRotation * inputDirection;
-        data.moveDirection = inputDirection;
-        data.mouseDirection = cameraRotation;
-        // 스페이스바에 기반한 점프 입력 설정
-        data.buttons.Set(NetworkInputButtons.Jump, Input.GetKey(KeyCode.Space));
+        if (_playerInputHandler == null && NetworkPlayer.Local != null)
+        {
+            _playerInputHandler = NetworkPlayer.Local.GetComponent<PlayerInputHandler>();
+            print("playerinputhandler부착");
+        }
+        if(_playerInputHandler != null)
+        {
+            input.Set(_playerInputHandler.GetNetworkInput());
+        }
 
-        // 마우스 입력 추적
-        data.mouseX = Input.GetAxis("Mouse X");
-        data.mouseY = Input.GetAxis("Mouse Y");
-
-        // 마우스 버튼 0 상태 추적
-        data.buttons.Set(NetworkInputData.MOUSEBUTTON0, _mouseButton0);
-        _mouseButton0 = false;
-
-        // 마우스 버튼 0 상태 추적
-        data.buttons.Set(NetworkInputData.MOUSEBUTTON1, _mouseButton1);
-        _mouseButton1 = false;
-
+       
         
-
-
-
-
-        input.Set(data);
     }
 
 
